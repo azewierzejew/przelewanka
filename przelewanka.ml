@@ -1,7 +1,7 @@
 (* Autor: Antoni Żewierżejew *)
 (* Reviewer: Jakub Nowak     *)
 
-(* zwraca NWD liczb a i b *)
+(* zwraca NWD liczb a i b, gdzie nwd a 0 = a, dla a, b >= 0 *)
 let rec nwd a b =
     if a < b then nwd b a else
     if b = 0 then a else
