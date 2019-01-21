@@ -29,12 +29,12 @@ let przelewanka tablica =
     let hashmapa = Hashtbl.create 1000000 in
     
     let napelnij nr stan = 
-        let wynik = Array.copy stan in
+        let wynik = copy stan in
         wynik.(nr) <- pojemnosc.(nr);
         wynik in
     
     let oproznij nr stan = 
-        let wynik = Array.copy stan in
+        let wynik = copy stan in
         wynik.(nr) <- 0;
         wynik in
     
@@ -52,12 +52,12 @@ let przelewanka tablica =
             Queue.push (stan, glebokosc + 1) kolejka
         end in
             
-    dodaj (Array.make n 0) (-1);
+    dodaj (make n 0) (-1);
     let it = ref 0 in
     try
         while not (Queue.is_empty kolejka) do
             let (stan, glebokosc) = Queue.pop kolejka in
-            Printf.printf "%d %d\n" glebokosc !it; flush stdout; it:= !it+1;
+            (* Printf.printf "%d %d\n" glebokosc !it; flush stdout; it:= !it+1; *)
             if stan = stan_koncowy then raise (Znalezione glebokosc) else
             for i = 0 to n - 1 do
                 dodaj (napelnij i stan) glebokosc;
@@ -69,5 +69,3 @@ let przelewanka tablica =
         done;
         -1
     with Znalezione wynik -> wynik
-    
-
