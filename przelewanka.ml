@@ -12,7 +12,23 @@ open Array
 (* wyjątek używany do szybkiego kończenia pętli, gdy wynik zostanie znaleziony *)
 exception Znalezione of int
 
+(*
+    Jest dane n szklanek, ponumerowanych od 0 do n - 1, o pojemnościach odpowiednio x1, x2, ..., xn.
+    Początkowo wszystkie szklanki są puste. Można wykonywać następujące czynności:
+    - nalać do wybranej szklanki do pełna wody z kranu, 
+    - wylać całą wodę z wybranej szklanki do zlewu, 
+    - przelać wodę z jednej szklanki do drugiej — jeżeli się zmieści, to przelewa się całą wodę,
+      a jeżeli nie, to tyle żeby druga szklanka była pełna.
+
+    Procedura przelewanka : (int * int) array → int, mając daną tablicę par liczb
+    [|(x1, y1); (x2, y2); ...; (xn, yn)|] wyznaczy minimalną liczbę czynności potrzebnych
+    do uzyskania ze stanu (0, 0, ..., 0) stanu (y1, y2, ..., yn).
+    Jeżeli uzyskanie go nie jest możliwe, to poprawnym wynikiem jest -1. 
+
+    Założenia 0 <= n, oraz 0 <= yi <= xi dla i = 0, 1, ..., n - 1.
+*)
 let przelewanka tablica =
+    let tablica = of_list (List.filter (fun (x, _) -> x <> 0) (to_list tablica)) in
     let n = length tablica in
     let pojemnosc = map fst tablica in
     let stan_koncowy = map snd tablica in
@@ -26,39 +42,43 @@ let przelewanka tablica =
     if nwd_koncowe mod nwd_pojemnosc <> 0 then -1 else
     
     let kolejka = Queue.create () in
-    let hashmapa = Hashtbl.create 1000000 in
+    let hashmapa = Hashtbl.create 2137 in
     
     let napelnij nr stan = 
+        if stan.(nr) = pojemnosc.(nr) then None else 
         let wynik = copy stan in
         wynik.(nr) <- pojemnosc.(nr);
-        wynik in
+        Some wynik in
     
     let oproznij nr stan = 
+        if stan.(nr) = 0 then None else
         let wynik = copy stan in
         wynik.(nr) <- 0;
-        wynik in
+        Some wynik in
     
     let przelej zrodlo cel stan =
-        let wynik = copy stan in
         let ilosc = min stan.(zrodlo) (pojemnosc.(cel) - stan.(cel)) in
+        if ilosc = 0 then None else
+        let wynik = copy stan in
         wynik.(zrodlo) <- wynik.(zrodlo) - ilosc;
         wynik.(cel) <- wynik.(cel) + ilosc;
-        wynik in
+        Some wynik in
     
-    let dodaj stan glebokosc =
-        if not (Hashtbl.mem hashmapa (to_list stan)) then 
-        begin
-            Hashtbl.add hashmapa (to_list stan) ();
-            Queue.push (stan, glebokosc + 1) kolejka
-        end in
-            
-    dodaj (make n 0) (-1);
-    let it = ref 0 in
+    let dodaj stan_opcja glebokosc =
+        match stan_opcja with
+        | None -> ()
+        | Some stan ->
+            if not (Hashtbl.mem hashmapa (to_list stan)) then 
+            begin
+                if stan = stan_koncowy then raise (Znalezione glebokosc); 
+                Hashtbl.add hashmapa (to_list stan) ();
+                Queue.push (stan, glebokosc + 1) kolejka
+            end in
+    
     try
+        dodaj (Some (make n 0)) 0;
         while not (Queue.is_empty kolejka) do
             let (stan, glebokosc) = Queue.pop kolejka in
-            (* Printf.printf "%d %d\n" glebokosc !it; flush stdout; it:= !it+1; *)
-            if stan = stan_koncowy then raise (Znalezione glebokosc) else
             for i = 0 to n - 1 do
                 dodaj (napelnij i stan) glebokosc;
                 dodaj (oproznij i stan) glebokosc;
