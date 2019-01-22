@@ -28,6 +28,7 @@ exception Znalezione of int
     Założenia 0 <= n, oraz 0 <= yi <= xi dla i = 0, 1, ..., n - 1.
 *)
 let przelewanka tablica =
+    (* zerowe kubełki nie wpływają na wynik *)
     let tablica = of_list (List.filter (fun (x, _) -> x <> 0) (to_list tablica)) in
     let n = length tablica in
     let pojemnosc = map fst tablica in
@@ -37,13 +38,13 @@ let przelewanka tablica =
     if not (fold_left (fun a (x, y) -> a || (y = 0) || (y = x)) false tablica) then -1 else
     let nwd_pojemnosc = fold_left nwd 0 pojemnosc in
     let nwd_koncowe = fold_left nwd 0 stan_koncowy in
-    (* jeśli nwd_pojemnosc = 0 to wszystkie pojemności są równe 0, a wtedy od razu mamy wynik *)
-    if nwd_pojemnosc = 0 then 0 else
+    (* jest niezerowa ilość niezerowych kubełków, więc nwd_pojemnosc wyjdzie niezerowe *)
     if nwd_koncowe mod nwd_pojemnosc <> 0 then -1 else
     
     let kolejka = Queue.create () in
     let hashmapa = Hashtbl.create 2137 in
     
+    (* funkcje pomocnicze wykonujące operację, zwracają None jeśli operacja nic nie da *)
     let napelnij nr stan = 
         if stan.(nr) = pojemnosc.(nr) then None else 
         let wynik = copy stan in
@@ -57,6 +58,7 @@ let przelewanka tablica =
         Some wynik in
     
     let przelej zrodlo cel stan =
+        if zrodlo = cel then None else
         let ilosc = min stan.(zrodlo) (pojemnosc.(cel) - stan.(cel)) in
         if ilosc = 0 then None else
         let wynik = copy stan in
@@ -64,6 +66,7 @@ let przelewanka tablica =
         wynik.(cel) <- wynik.(cel) + ilosc;
         Some wynik in
     
+    (* wrzuca nowy stan na hashtablicę i kolejkę, podnosi Znalezione gdy mamy wynik *)
     let dodaj stan_opcja glebokosc =
         match stan_opcja with
         | None -> ()
