@@ -38,7 +38,7 @@ let przelewanka tablica =
     if not (fold_left (fun a (x, y) -> a || (y = 0) || (y = x)) false tablica) then -1 else
     let nwd_pojemnosc = fold_left nwd 0 pojemnosc in
     let nwd_koncowe = fold_left nwd 0 stan_koncowy in
-    (* jest niezerowa ilość niezerowych kubełków, więc nwd_pojemnosc wyjdzie niezerowe *)
+    (* jest niezerowa liczba niezerowych kubełków, więc nwd_pojemnosc wyjdzie niezerowe *)
     if nwd_koncowe mod nwd_pojemnosc <> 0 then -1 else
     
     let kolejka = Queue.create () in
