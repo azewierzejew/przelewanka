@@ -35,7 +35,7 @@ let przelewanka tablica =
     let stan_koncowy = map snd tablica in
     
     if n = 0 then 0 else
-    if not (fold_left (fun a (x, y) -> a || (y = 0) || (y = x)) false tablica) then -1 else
+    if not (exists (fun (x, y) -> (y = 0) || (y = x)) tablica) then -1 else
     let nwd_pojemnosc = fold_left nwd 0 pojemnosc in
     let nwd_koncowe = fold_left nwd 0 stan_koncowy in
     (* jest niezerowa liczba niezerowych kubełków, więc nwd_pojemnosc wyjdzie niezerowe *)
