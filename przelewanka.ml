@@ -13,7 +13,7 @@ open Array
 exception Znalezione of int
 
 (*
-    Jest dane n szklanek, ponumerowanych od 0 do n - 1, o pojemnościach odpowiednio x1, x2, ..., xn.
+    Jest dane n szklanek, ponumerowanych od 1 do n, o pojemnościach odpowiednio x1, x2, ..., xn.
     Początkowo wszystkie szklanki są puste. Można wykonywać następujące czynności:
     - nalać do wybranej szklanki do pełna wody z kranu, 
     - wylać całą wodę z wybranej szklanki do zlewu, 
@@ -25,7 +25,7 @@ exception Znalezione of int
     do uzyskania ze stanu (0, 0, ..., 0) stanu (y1, y2, ..., yn).
     Jeżeli uzyskanie go nie jest możliwe, to poprawnym wynikiem jest -1. 
 
-    Założenia 0 <= n, oraz 0 <= yi <= xi dla i = 0, 1, ..., n - 1.
+    Założenia 0 <= n, oraz 0 <= yi <= xi dla i = 1, 2, ..., n.
 *)
 let przelewanka tablica =
     (* zerowe kubełki nie wpływają na wynik *)
