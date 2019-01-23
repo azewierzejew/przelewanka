@@ -71,6 +71,7 @@ let przelewanka tablica =
         match stan_opcja with
         | None -> ()
         | Some stan ->
+            (* na Hashtbl wrzucamy listy, żeby modyfikacja tablicy [stan] nie wpływała na mapę *) 
             if not (Hashtbl.mem hashmapa (to_list stan)) then 
             begin
                 if stan = stan_koncowy then raise (Znalezione glebokosc); 
